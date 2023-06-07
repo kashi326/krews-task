@@ -30,13 +30,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('users', ['isAuthenticated']),
+    ...mapGetters('users', ['isAuthenticated'])
   },
   methods: {
     ...mapActions('users', ['logout']),
     logoutUser() {
       this.logout()
-      this.isLoggedIn =false
+      this.isLoggedIn = false
     }
   },
   created() {

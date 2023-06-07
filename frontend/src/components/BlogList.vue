@@ -32,7 +32,7 @@ export default {
     }
   },
   created() {
-    this.fetchAllBlogs();
+    this.fetchAllBlogs()
   },
   computed: {
     filteredBlogs() {
@@ -47,7 +47,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('blogs', ['deleteBlog','fetchAllBlogs']),
+    ...mapActions('blogs', ['deleteBlog', 'fetchAllBlogs']),
     editBlog(blog) {
       this.$router.push({ name: 'edit', params: { id: blog.id } })
     },

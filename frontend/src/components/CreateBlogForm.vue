@@ -4,28 +4,41 @@
       <v-card-title class="tw-p-4">
         <h2>Create Blog</h2>
       </v-card-title>
-      <v-divider style="opacity: 1"/>
+      <v-divider style="opacity: 1" />
       <v-card-text>
         <v-alert variant="outlined" class="tw-mb-4" v-if="error.message" type="error">
-          {{error.message}}
+          {{ error.message }}
         </v-alert>
-        <v-text-field v-model="blog.title" :error-messages="error.errors?.title" label="Title" variant="outlined" dense></v-text-field>
-        <br>
-        <v-textarea v-model="blog.body" :error-messages="error.errors?.body" label="Content" variant="outlined" dense></v-textarea>
-        <br>
+        <v-text-field
+          v-model="blog.title"
+          :error-messages="error.errors?.title"
+          label="Title"
+          variant="outlined"
+          dense
+        ></v-text-field>
+        <br />
+        <v-textarea
+          v-model="blog.body"
+          :error-messages="error.errors?.body"
+          label="Content"
+          variant="outlined"
+          dense
+        ></v-textarea>
+        <br />
         <v-file-input
-            :multiple="false"
-            :clearable="false"
-            label="Image"
-            v-model="blog.image"
-            variant="outlined"
-            dense
-            accept="image/*" :error-messages="error.errors?.image"
+          :multiple="false"
+          :clearable="false"
+          label="Image"
+          v-model="blog.image"
+          variant="outlined"
+          dense
+          accept="image/*"
+          :error-messages="error.errors?.image"
         ></v-file-input>
-        <br>
+        <br />
         <template v-if="previewLink !== null">
           <p class="px-5 mb-2">Image Preview</p>
-          <v-img :src="previewLink" width="200" height="200"/>
+          <v-img :src="previewLink" width="200" height="200" />
         </template>
       </v-card-text>
       <v-card-actions>
@@ -36,8 +49,8 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
-import {useCreateBlob} from '@/composition/file-conversion'
+import { mapActions } from 'vuex'
+import { useCreateBlob } from '@/composition/file-conversion'
 
 export default {
   data() {
@@ -72,7 +85,7 @@ export default {
     'blog.image': {
       handler(newVal) {
         console.log('blog.image changed:', newVal)
-        const {url} = useCreateBlob(newVal[0])
+        const { url } = useCreateBlob(newVal[0])
         this.previewLink = url
       },
       deep: true // Enable deep watching for nested properties

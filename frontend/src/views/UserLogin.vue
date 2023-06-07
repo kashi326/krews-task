@@ -6,7 +6,7 @@
     <v-divider style="opacity: 1" />
     <v-card-text>
       <v-alert variant="outlined" class="tw-mb-4" v-if="error.message" type="error">
-        {{error.message}}
+        {{ error.message }}
       </v-alert>
       <v-form @submit.prevent="handleLogin">
         <v-text-field
@@ -15,7 +15,7 @@
           variant="outlined"
           label="Email"
         ></v-text-field>
-        <br>
+        <br />
         <v-text-field
           v-model="credentials.password"
           :error-messages="error.errors?.password"
@@ -50,7 +50,7 @@ export default {
     async handleLogin() {
       try {
         await this.login(this.credentials)
-        window.location.href = "/"
+        window.location.href = '/'
       } catch (error) {
         this.error = error.response.data
       }

@@ -24,13 +24,13 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
       blogData: {},
-      loading:false
+      loading: false
     }
   },
   computed: {
@@ -43,7 +43,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('blogs',['updateBlog']),
+    ...mapActions('blogs', ['updateBlog']),
     async saveBlog() {
       this.loading = true
       try {
