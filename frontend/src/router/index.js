@@ -4,7 +4,7 @@ import CreateBlogForm from '@/components/CreateBlogForm.vue'
 import EditBlogForm from '@/components/EditBlogForm.vue'
 import Login from '@/views/UserLogin.vue'
 import Signup from '@/views/UserSignup.vue'
-import store from "@/stores/store";
+import store from '@/stores/store'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,16 +17,15 @@ const router = createRouter({
   ]
 })
 
-
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!store.state.users.currentUser;
-  const isLoginPage = to.path === '/login';
-  const isRegisterPage = to.path === '/register';
+  const isAuthenticated = !!store.state.users.currentUser
+  const isLoginPage = to.path === '/login'
+  const isRegisterPage = to.path === '/register'
 
   if (isAuthenticated && (isLoginPage || isRegisterPage)) {
-    next('/');
+    next('/')
   } else {
-    next();
+    next()
   }
-});
+})
 export default router

@@ -22,6 +22,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import api from "@/axios";
 
 export default {
   data() {
@@ -81,5 +82,4 @@ export default {
   text-decoration: none;
   font-weight: 500;
 }
-
 </style>
