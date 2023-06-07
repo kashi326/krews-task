@@ -22,7 +22,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import api from "@/axios";
 
 export default {
   data() {
@@ -32,21 +31,16 @@ export default {
   },
   computed: {
     ...mapGetters('users', ['isAuthenticated']),
-    isLogin() {
-      const isAuthenticated = this.isAuthenticated
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      this.isLoggedIn = isAuthenticated
-      return isAuthenticated
-    }
   },
   methods: {
     ...mapActions('users', ['logout']),
     logoutUser() {
       this.logout()
+      this.isLoggedIn =false
     }
   },
-  mounted() {
-    this.isLogin
+  created() {
+    this.isLoggedIn = this.isAuthenticated
   }
 }
 </script>

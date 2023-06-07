@@ -50,7 +50,7 @@ export default {
     async handleLogin() {
       try {
         await this.login(this.credentials)
-        this.$router.push('/')
+        window.location.href = "/"
       } catch (error) {
         this.error = error.response.data
       }

@@ -5,7 +5,7 @@ import blogs from '@/stores/modules/blogs'
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  modules: ['users']
+  modules: ['users','blogs']
 })
 const store = createStore({
   modules: {

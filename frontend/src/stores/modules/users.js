@@ -1,4 +1,5 @@
 import api from '@/axios'
+import store from "@/stores/store";
 
 const users = {
     namespaced: true,
@@ -49,7 +50,11 @@ const users = {
         async logout({commit}) {
             commit('setLoading', true)
             try {
-                await api.post('/api/logout')
+                await api.post('/api/logout',{},{
+                    headers:{
+                        "Authorization":`Bearer ${store.getters["users/token"]}`
+                    }
+                })
                 commit('setUser', null)
             } finally {
                 commit('setLoading', false)

@@ -9,9 +9,9 @@
     <v-row>
       <v-col v-for="blog in filteredBlogs" :key="blog.id" cols="12" sm="6" md="4" lg="3">
         <v-card>
-          <v-img :src="blog.image" height="200"></v-img>
+          <v-img :src="blog.image_link" height="200"></v-img>
           <v-card-title>{{ blog.title }}</v-card-title>
-          <v-card-text>{{ blog.content }}</v-card-text>
+          <v-card-text>{{ blog.body }}</v-card-text>
           <v-card-actions>
             <v-icon small class="mr-2" @click="editBlog(blog)">mdi-pencil</v-icon>
             <v-icon small @click="removeBlog(blog)">mdi-delete</v-icon>
@@ -31,6 +31,9 @@ export default {
       search: ''
     }
   },
+  created() {
+    this.fetchAllBlogs();
+  },
   computed: {
     filteredBlogs() {
       return this.blogs.filter((blog) =>
@@ -44,7 +47,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('blogs', ['deleteBlog']),
+    ...mapActions('blogs', ['deleteBlog','fetchAllBlogs']),
     editBlog(blog) {
       this.$router.push({ name: 'edit', params: { id: blog.id } })
     },

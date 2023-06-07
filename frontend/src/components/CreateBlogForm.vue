@@ -6,8 +6,13 @@
       </v-card-title>
       <v-divider style="opacity: 1"/>
       <v-card-text>
-        <v-text-field v-model="blog.title" label="Title" variant="outlined" dense></v-text-field>
-        <v-textarea v-model="blog.content" label="Content" variant="outlined" dense></v-textarea>
+        <v-alert variant="outlined" class="tw-mb-4" v-if="error.message" type="error">
+          {{error.message}}
+        </v-alert>
+        <v-text-field v-model="blog.title" :error-messages="error.errors?.title" label="Title" variant="outlined" dense></v-text-field>
+        <br>
+        <v-textarea v-model="blog.body" :error-messages="error.errors?.body" label="Content" variant="outlined" dense></v-textarea>
+        <br>
         <v-file-input
             :multiple="false"
             :clearable="false"
@@ -15,8 +20,9 @@
             v-model="blog.image"
             variant="outlined"
             dense
-            accept="image/*"
+            accept="image/*" :error-messages="error.errors?.image"
         ></v-file-input>
+        <br>
         <template v-if="previewLink !== null">
           <p class="px-5 mb-2">Image Preview</p>
           <v-img :src="previewLink" width="200" height="200"/>
@@ -39,7 +45,7 @@ export default {
       loading: false,
       blog: {
         title: '',
-        content: '',
+        body: '',
         image: null
       },
       previewLink: null,
@@ -52,11 +58,9 @@ export default {
       this.loading = true
       try {
         // Handle save functionality
-        const response = await this.addBlog(this.blog)
-        if (response) {
-          this.loading = false
-          this.$router.push('/')
-        }
+        await this.addBlog(this.blog)
+        this.loading = false
+        this.$router.push('/')
       } catch (error) {
         this.error = error.response.data
       } finally {
