@@ -16,7 +16,8 @@ class Blog extends Model
         'title',
         'body',
         'image_path',
-        'user_id'
+        'user_id',
+        'publish_date'
     ];
 
     public function getImageLinkAttribute()
