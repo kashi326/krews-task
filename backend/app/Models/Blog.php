@@ -10,7 +10,7 @@ class Blog extends Model
 {
     use HasFactory;
 
-    protected $appends = ['image_link'];
+    protected $appends = ['image_link','owned'];
     protected $fillable = [
         'title',
         'body',
@@ -21,5 +21,9 @@ class Blog extends Model
     public function getImageLinkAttribute()
     {
         return Storage::disk('s3')->temporaryUrl($this->image_path, now()->addHour());
+    }
+    public function getOwnedAttribute()
+    {
+        return auth()->check() && $this->user_id === auth()->id();
     }
 }
