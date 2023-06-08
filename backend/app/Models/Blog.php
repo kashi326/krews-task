@@ -12,6 +12,7 @@ class Blog extends Model
 
     protected $appends = ['image_link','owned'];
     protected $fillable = [
+        'id',
         'title',
         'body',
         'image_path',

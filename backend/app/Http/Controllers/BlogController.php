@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -66,10 +67,12 @@ class BlogController extends Controller
             return response()->json(['image' => 'Image can\'t be uploaded'], 400);
         }
         $blog = Blog::create([
+            'id'=>Blog::max('id')+1,
             'title' => $request->input('title'),
             'body' => $request->input('body'),
             'image_path' => $imagePath,
             'user_id' => $user->id,
+            'publish_date'=>Carbon::now()
         ]);
 
         return response()->json($blog, 201);
