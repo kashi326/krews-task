@@ -18,7 +18,7 @@ const users = {
   },
   getters: {
     isAuthenticated: (state) => !!state.currentUser,
-    token: (state) => state.currentUser.access_token
+    token: (state) => state.currentUser?.access_token||null
   },
   actions: {
     async login({ commit }, credentials) {

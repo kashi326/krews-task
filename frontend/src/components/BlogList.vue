@@ -37,6 +37,7 @@
       <i class="mdi mdi-alert-circle-outline"></i>
       <p>No blogs found.</p>
     </div>
+    <br>
     <div class="tw-flex tw-justify-end" v-if="blogs.length>0">
       <v-pagination
         v-model="pagination.currentPage"
@@ -44,6 +45,7 @@
         variant="outlined"
         rounded="circle"
         @update:model-value="onPageChange"
+        total-visible="7"
       ></v-pagination>
     </div>
   </div>

@@ -10,12 +10,12 @@ import ViewBlog from '@/components/ViewBlog.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', component: BlogList },
+    { path: '/', component: BlogList , meta: { requiresAuth: true } },
     { path: '/login', component: Login },
     { path: '/register', component: Signup },
     { path: '/create', component: CreateBlogForm, meta: { requiresAuth: true } },
     { path: '/edit/:id', name: 'edit', component: EditBlogForm, meta: { requiresAuth: true } },
-    { path: '/view/:id', name: 'view', component: ViewBlog }
+    { path: '/view/:id', name: 'view', component: ViewBlog , meta: { requiresAuth: true } }
   ]
 })
 

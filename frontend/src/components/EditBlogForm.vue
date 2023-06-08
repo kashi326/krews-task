@@ -4,16 +4,22 @@
       <v-card-title>
         <h2>Edit Blog</h2>
       </v-card-title>
+      <v-divider style="opacity: 1" />
       <v-card-text>
-        <v-text-field v-model="blogData.title" label="Title" outlined dense></v-text-field>
-        <v-textarea v-model="blogData.body" label="Content" outlined dense></v-textarea>
+        <v-alert variant="outlined" class="tw-mb-4" v-if="error.message" type="error">
+          {{ error.message }}
+        </v-alert>
+        <v-text-field v-model="blogData.title" :error-messages="error.errors?.title" label="Title" outlined dense></v-text-field>
+        <br>
+        <v-textarea v-model="blogData.body" :error-messages="error.errors?.body" label="Blog Body" outlined dense></v-textarea>
+        <br>
         <v-file-input
           :multiple="false"
           :clearable="false"
           label="Image"
           outlined
           dense
-          v-model="blogData.image"
+          v-model="blogData.image" :error-messages="error.errors?.image"
         ></v-file-input>
       </v-card-text>
       <v-card-actions>
@@ -30,7 +36,8 @@ export default {
   data() {
     return {
       blogData: {},
-      loading: false
+      loading: false,
+      error:{}
     }
   },
   computed: {
@@ -60,7 +67,10 @@ export default {
     }
   },
   mounted() {
-    this.blog
+    const data = this.blog
+    if(!data){ //if no blog is found redirect to all blogs
+      this.$router.push('/')
+    }
   }
 }
 </script>
