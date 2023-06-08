@@ -3,7 +3,7 @@
     <nav class="nav">
       <ul class="nav-list">
         <li class="nav-item"><router-link to="/" class="nav-link">All Blogs</router-link></li>
-        <li class="nav-item">
+        <li class="nav-item" v-if="isLoggedIn">
           <router-link to="/create" class="nav-link">Create Blog</router-link>
         </li>
         <li v-if="!isLoggedIn" class="nav-item">

@@ -1,61 +1,105 @@
 <template>
   <div>
+
     <v-text-field
       v-model="search"
       label="Search"
       variant="outlined"
       class="search-field"
     ></v-text-field>
+    <v-alert variant="outlined" class="tw-mb-4" v-if="message.length>0" type="success" closable="true">
+      {{ message }}
+    </v-alert>
+    <v-alert variant="outlined" class="tw-mb-4" v-if="error.length>0" type="error" closable="true">
+      {{ error }}
+    </v-alert>
+    <div v-if="blogs.length > 0">
     <v-row>
-      <v-col v-for="blog in filteredBlogs" :key="blog.id" cols="12" sm="6" md="4" lg="3">
+      <v-col v-for="blog in blogs" :key="blog.id" cols="12" sm="6" md="4">
         <v-card>
           <v-img :src="blog.image_link" height="200"></v-img>
-          <v-card-title>{{ blog.title }}</v-card-title>
-          <v-card-text>{{ blog.body }}</v-card-text>
-          <v-card-actions>
-            <v-icon small class="mr-2" @click="editBlog(blog)">mdi-pencil</v-icon>
-            <v-icon small @click="removeBlog(blog)">mdi-delete</v-icon>
+          <router-link :to="'/view/' + blog.id">
+            <v-card-title class="tw-text-blue-400">{{ blog.title }}</v-card-title>
+          </router-link>
+          <v-card-text class="tw-min-h-[80px] !tw-py-2">{{ blog.body.slice(0, 150) }}</v-card-text>
+          <v-card-actions class="!tw-justify-between">
+            <p>{{ formatDate(blog.created_at) }}</p>
+            <div v-if="blog.owned">
+              <v-icon small class="mr-2 !tw-text-green-500" @click="editBlog(blog)">mdi-pencil</v-icon>
+              <v-icon small class="!tw-text-red-500" @click="removeBlog(blog)">mdi-delete</v-icon>
+            </div>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
+    </div>
+    <div v-else class="no-blogs">
+      <i class="mdi mdi-alert-circle-outline"></i>
+      <p>No blogs found.</p>
+    </div>
+    <div class="tw-flex tw-justify-end" v-if="blogs.length>0">
+      <v-pagination
+        v-model="pagination.currentPage"
+        :length="Math.floor(pagination.total / 2) + 1"
+        variant="outlined"
+        rounded="circle"
+        @update:model-value="onPageChange"
+      ></v-pagination>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import { formatDate } from '@/utils/utils'
 
 export default {
+  computed: {
+    ...mapGetters('blogs', ['getAllBlogs', 'getPagination']),
+    blogs() {
+      return this.getAllBlogs
+    },
+    pagination() {
+      return this.getPagination
+    }
+  },
   data() {
     return {
-      search: ''
+      search: '',
+      message:'',
+      error:''
     }
   },
   created() {
     this.fetchAllBlogs()
   },
-  computed: {
-    filteredBlogs() {
-      return this.blogs.filter((blog) =>
-        blog.title.toLowerCase().includes(this.search.toLowerCase())
-      )
-    },
-    ...mapGetters('blogs', ['getAllBlogs']),
-    blogs() {
-      return this.getAllBlogs
-    }
-  },
-
   methods: {
-    ...mapActions('blogs', ['deleteBlog', 'fetchAllBlogs']),
+    formatDate,
+    ...mapActions('blogs', ['deleteBlog', 'fetchAllBlogs', 'updateCurrentPage']),
+    onPageChange(newPage) {
+      console.log(newPage)
+      this.pagination.currentPage = newPage
+      this.updateCurrentPage(newPage)
+      this.fetchAllBlogs()
+    },
     editBlog(blog) {
       this.$router.push({ name: 'edit', params: { id: blog.id } })
     },
     async removeBlog(blog) {
-      console.log(await this.deleteBlog(blog.id))
-    },
-    filterBlogs() {
-      // Handle search functionality
+      if (confirm("Are you sure you want to delete this blog?")){
+        try {
+          await this.deleteBlog(blog.id)
+          this.message = "Blog deleted successfully";
+          await this.fetchAllBlogs(this.search)
+        }catch (e) {
+          this.error = "Something went wrong"
+        }
+      }
+    }
+  },
+  watch:{
+    search(newValue){
+      this.fetchAllBlogs(newValue)
     }
   }
 }
@@ -66,5 +110,20 @@ export default {
   max-width: 300px;
   margin-bottom: 20px;
   margin-left: auto;
+}
+.no-blogs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-size: 2em;
+}
+
+.no-blogs i {
+  color: rgba(204, 11, 11, 0.59);
+  margin-bottom: 10px;
 }
 </style>

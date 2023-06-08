@@ -20,7 +20,7 @@
         <v-textarea
           v-model="blog.body"
           :error-messages="error.errors?.body"
-          label="Content"
+          label="Blog Body"
           variant="outlined"
           dense
         ></v-textarea>
@@ -75,6 +75,7 @@ export default {
         this.loading = false
         this.$router.push('/')
       } catch (error) {
+        console.log(error)
         this.error = error.response.data
       } finally {
         this.loading = false
