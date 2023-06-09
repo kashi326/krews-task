@@ -1,6 +1,6 @@
 import api from '@/axios'
 import store from '@/stores/store'
-import axios from "axios";
+import axios from 'axios'
 
 const blogs = {
   namespaced: true,
@@ -11,7 +11,7 @@ const blogs = {
       currentPage: 1,
       last_page: 1
     },
-    cancelToken:null
+    cancelToken: null
   },
   getters: {
     getAllBlogs: (state) => state.blogs,
@@ -22,17 +22,17 @@ const blogs = {
   actions: {
     async fetchAllBlogs({ commit, state }, search = '') {
       if (state.cancelToken && state.cancelToken?.cancel) {
-        state.cancelToken?.cancel('Request cancelled');
+        state.cancelToken?.cancel('Request cancelled')
       }
 
       // Create a new cancel token for the current request
-      const cancelToken = axios.CancelToken.source();
-      commit('setCancelToken', cancelToken);
+      const cancelToken = axios.CancelToken.source()
+      commit('setCancelToken', cancelToken)
 
       const currentPage = state.pagination.currentPage || 1
 
       const params = {
-        page: search.length>0?1:currentPage,
+        page: search.length > 0 ? 1 : currentPage,
         search: search
       }
       return api
@@ -52,15 +52,13 @@ const blogs = {
             last_page: blogs.last_page
           })
         })
-        .catch(() => {
-
-        })
+        .catch(() => {})
     },
-    async addBlog({commit},blog) {
+    async addBlog({ commit }, blog) {
       const formData = new FormData()
       formData.append('title', blog.title)
       formData.append('body', blog.body)
-      if (blog.image){
+      if (blog.image) {
         formData.append('image', blog.image[0] || null)
       }
       await api.post('/api/blogs', formData, {
@@ -69,7 +67,7 @@ const blogs = {
         }
       })
     },
-    async updateBlog({commit},updatedBlog) {
+    async updateBlog({ commit }, updatedBlog) {
       const formData = new FormData()
       formData.append('title', updatedBlog.title)
       formData.append('body', updatedBlog.body)
@@ -83,7 +81,7 @@ const blogs = {
       })
     },
     async deleteBlog({ commit }, blogId) {
-      await api.delete('/api/blogs/'+blogId, {
+      await api.delete('/api/blogs/' + blogId, {
         headers: {
           Authorization: `Bearer ${store.getters['users/token']}`
         }
@@ -94,6 +92,24 @@ const blogs = {
         ...state.pagination,
         currentPage
       })
+    },
+    async likeBlog({ commit, state }, blogId) {
+      const blogs = state.blogs.map((blog) => {
+        if (blog.id.toString() === blogId.toString()) {
+          blog.liked = !blog.liked
+        }
+        return blog
+      })
+      commit('setBlogs', blogs)
+      await api.post(
+        '/api/blogs/' + blogId + '/like',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${store.getters['users/token']}`
+          }
+        }
+      )
     }
   },
   mutations: {
@@ -103,7 +119,7 @@ const blogs = {
     setPagination(state, pagination) {
       state.pagination = pagination
     },
-    setCancelToken(state,cancelToken){
+    setCancelToken(state, cancelToken) {
       state.cancelToken = cancelToken
     }
   }

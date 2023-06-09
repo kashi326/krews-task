@@ -75,7 +75,6 @@ export default {
         this.loading = false
         this.$router.push('/')
       } catch (error) {
-        console.log(error)
         this.error = error.response.data
       } finally {
         this.loading = false
@@ -85,7 +84,6 @@ export default {
   watch: {
     'blog.image': {
       handler(newVal) {
-        console.log('blog.image changed:', newVal)
         const { url } = useCreateBlob(newVal[0])
         this.previewLink = url
       },

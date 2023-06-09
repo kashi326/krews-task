@@ -14,7 +14,7 @@
     <div class="blog-content">
       <img :src="blog.image_link" alt="Blog Image" class="!tw-min-h-[600px] blog-image" />
       <div class="blog-body">
-        {{blog.body}}
+        {{ blog.body }}
       </div>
     </div>
   </div>

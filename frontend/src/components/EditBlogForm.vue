@@ -9,17 +9,30 @@
         <v-alert variant="outlined" class="tw-mb-4" v-if="error.message" type="error">
           {{ error.message }}
         </v-alert>
-        <v-text-field v-model="blogData.title" :error-messages="error.errors?.title" label="Title" outlined dense></v-text-field>
-        <br>
-        <v-textarea v-model="blogData.body" :error-messages="error.errors?.body" label="Blog Body" outlined dense></v-textarea>
-        <br>
+        <v-text-field
+          v-model="blogData.title"
+          :error-messages="error.errors?.title"
+          label="Title"
+          outlined
+          dense
+        ></v-text-field>
+        <br />
+        <v-textarea
+          v-model="blogData.body"
+          :error-messages="error.errors?.body"
+          label="Blog Body"
+          outlined
+          dense
+        ></v-textarea>
+        <br />
         <v-file-input
           :multiple="false"
           :clearable="false"
           label="Image"
           outlined
           dense
-          v-model="blogData.image" :error-messages="error.errors?.image"
+          v-model="blogData.image"
+          :error-messages="error.errors?.image"
         ></v-file-input>
       </v-card-text>
       <v-card-actions>
@@ -37,7 +50,7 @@ export default {
     return {
       blogData: {},
       loading: false,
-      error:{}
+      error: {}
     }
   },
   computed: {
@@ -59,7 +72,6 @@ export default {
         this.loading = false
         this.$router.push('/')
       } catch (error) {
-        console.log(error)
         this.error = error.response.data
       } finally {
         this.loading = false
@@ -68,7 +80,8 @@ export default {
   },
   mounted() {
     const data = this.blog
-    if(!data){ //if no blog is found redirect to all blogs
+    if (!data) {
+      //if no blog is found redirect to all blogs
       this.$router.push('/')
     }
   }

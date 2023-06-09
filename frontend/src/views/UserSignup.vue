@@ -58,9 +58,8 @@ export default {
     async handleSignup() {
       try {
         await this.signup(this.userData)
-        window.location.href ='/login'
+        window.location.href = '/login'
       } catch (error) {
-        console.log(error.response)
         this.error = error.response.data
       }
     }
