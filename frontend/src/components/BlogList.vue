@@ -63,7 +63,7 @@
     <div class="tw-flex tw-justify-end" v-if="blogs.length > 0">
       <v-pagination
         v-model="pagination.currentPage"
-        :length="Math.floor(pagination.total / 2) + 1"
+        :length="Math.floor(pagination.total / 15) + 1"
         variant="outlined"
         rounded="circle"
         @update:model-value="onPageChange"
