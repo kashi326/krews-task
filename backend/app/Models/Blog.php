@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use App\Services\BlogService;
+use App\Traits\LikedByUserTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class Blog extends Model
 {
-    use HasFactory;
+    use HasFactory, LikedByUserTrait;
 
-    protected $appends = ['image_link','owned'];
+    protected $appends = ['image_link', 'owned', 'liked'];
     protected $fillable = [
         'id',
         'title',
@@ -20,12 +21,20 @@ class Blog extends Model
         'publish_date'
     ];
 
-    public function getImageLinkAttribute()
+    public function getImageLinkAttribute(): string
     {
-        return Storage::disk('s3')->temporaryUrl($this->image_path, now()->addHour());
+        return BlogService::getImageLink($this->image_path);
     }
-    public function getOwnedAttribute()
+
+    public function getOwnedAttribute(): bool
     {
-        return auth()->check() && $this->user_id === auth()->id();
+        $userId = auth()->id();
+        return BlogService::isOwnedByUser($userId, $this->user_id);
+    }
+
+    public function getLikedAttribute(): bool
+    {
+        $userId = auth()->id();
+        return $this->likedByUser($userId)->exists();
     }
 }

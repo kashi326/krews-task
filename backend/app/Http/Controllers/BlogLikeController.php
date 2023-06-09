@@ -16,10 +16,12 @@ class BlogLikeController extends Controller
         ])->first();
         if ($like){
             $like->delete();
+        }else{
+            BlogLike::create([
+                'user_id'=>$userId,
+                'blog_id'=>$blogId
+            ]);
         }
-        BlogLike::create([
-            'user_id'=>$userId,
-            'blog_id'=>$blogId
-        ]);
+        return response()->json(['message'=>'success']);
     }
 }

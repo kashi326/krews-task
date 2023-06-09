@@ -3,30 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Services\ImageService;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use App\Traits\ApiResponseTrait;
 
 class BlogController extends Controller
 {
-    public function index(Request $request)
+    use ApiResponseTrait;
+
+    public function index(Request $request): JsonResponse
     {
+        $search = $request->get('search');
+
         $blogs = Blog::query()
-            ->when($request->get('search'), function ($query, $search) {
-                return $query->where('title', 'like', '%' . $search . '%')->orWhere('body', 'like', '%' . $search . '%');
+            ->when($search, function ($query) use ($search) {
+                $query->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('body', 'like', '%' . $search . '%');
             })
+            ->latest('created_at')
             ->paginate(15);
-        return response()->json($blogs);
+
+        return $this->jsonResponse($blogs);
     }
 
-    public function show($id)
+    public function show($id): JsonResponse
     {
         $blog = Blog::findOrFail($id);
-        return response()->json($blog);
+        return $this->jsonResponse($blog);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
         $request->validate([
             'title' => 'required|min:10',
@@ -38,20 +47,18 @@ class BlogController extends Controller
         $blog->body = $request->input('body');
 
         if ($request->hasFile('image')) {
-            // Delete old image from S3
-            Storage::disk('s3')->delete($blog->image_path);
+            $this->deleteOldImage($blog);
 
-            // Store the new image in S3
-            $imagePath = $request->file('image')->store('blog_images', 's3');
+            $imagePath = ImageService::uploadImage($request->file('image'), 'blog_images');
             $blog->image_path = $imagePath;
         }
 
         $blog->save();
 
-        return response()->json($blog);
+        return $this->jsonResponse($blog);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'title' => 'required|min:10',
@@ -61,32 +68,36 @@ class BlogController extends Controller
 
         $user = Auth::user();
 
-        // Store the image in S3
-        $imagePath = $request->file('image')->store('blog_images', 's3');
+        $imagePath = ImageService::uploadImage($request->file('image'), 'blog_images');
         if (!$imagePath) {
-            return response()->json(['image' => 'Image can\'t be uploaded'], 400);
+            return $this->jsonResponse(['image' => 'Image can\'t be uploaded'], 400);
         }
+
         $blog = Blog::create([
-            'id'=>Blog::max('id')+1,
+            'id' => Blog::max('id') + 1,
             'title' => $request->input('title'),
             'body' => $request->input('body'),
             'image_path' => $imagePath,
             'user_id' => $user->id,
-            'publish_date'=>Carbon::now()
+            'publish_date' => Carbon::now(),
         ]);
 
-        return response()->json($blog, 201);
+        return $this->jsonResponse($blog, 201);
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $blog = Blog::findOrFail($id);
 
-        // Delete the image from S3
-        Storage::disk('s3')->delete($blog->image_path);
+        $this->deleteOldImage($blog);
 
         $blog->delete();
 
-        return response()->json(null, 204);
+        return $this->jsonResponse(null, 204);
+    }
+
+    private function deleteOldImage(Blog $blog): void
+    {
+        ImageService::deleteImage($blog->image_path);
     }
 }
