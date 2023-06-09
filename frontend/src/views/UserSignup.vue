@@ -3,36 +3,36 @@
     <v-card-title>
       <h2>Signup</h2>
     </v-card-title>
-    <v-divider style="opacity: 1" />
+    <v-divider style="opacity: 1"/>
     <v-card-text>
       <v-alert variant="outlined" class="tw-mb-4" v-if="error.message" type="error">
         {{ error.message }}
       </v-alert>
       <v-form @submit.prevent="handleSignup">
         <v-text-field
-          v-model="userData.name"
-          :error-messages="error.errors?.name"
-          variant="outlined"
-          label="Name"
+            v-model="userData.name"
+            :error-messages="error.errors?.name"
+            variant="outlined"
+            label="Name"
         ></v-text-field>
-        <br />
+        <br/>
         <v-text-field
-          v-model="userData.email"
-          :error-messages="error.errors?.email"
-          variant="outlined"
-          label="Email"
+            v-model="userData.email"
+            :error-messages="error.errors?.email"
+            variant="outlined"
+            label="Email"
         ></v-text-field>
-        <br />
+        <br/>
         <v-text-field
-          v-model="userData.password"
-          variant="outlined"
-          label="Password"
-          type="password"
-          :error-messages="error.errors?.password"
+            v-model="userData.password"
+            variant="outlined"
+            label="Password"
+            type="password"
+            :error-messages="error.errors?.password"
         ></v-text-field>
-        <br />
+        <br/>
         <div class="tw-flex tw-justify-end">
-          <v-btn type="submit" color="primary">Signup</v-btn>
+          <v-btn type="submit" :loading="loading" color="primary">Signup</v-btn>
         </div>
       </v-form>
     </v-card-text>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {mapActions} from 'vuex'
 
 export default {
   data() {
@@ -50,17 +50,21 @@ export default {
         email: '',
         password: ''
       },
-      error: {}
+      error: {},
+      loading:false
     }
   },
   methods: {
     ...mapActions('users', ['signup']),
     async handleSignup() {
+      this.loading = true
       try {
         await this.signup(this.userData)
         window.location.href = '/login'
       } catch (error) {
         this.error = error.response.data
+      } finally {
+        this.loading = false
       }
     }
   }

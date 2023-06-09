@@ -24,7 +24,7 @@
           type="password"
         ></v-text-field>
         <div class="tw-flex tw-justify-end">
-          <v-btn type="submit" color="primary">Login</v-btn>
+          <v-btn type="submit" :loading="loading" color="primary">Login</v-btn>
         </div>
       </v-form>
     </v-card-text>
@@ -41,18 +41,22 @@ export default {
         email: '',
         password: ''
       },
-      error: {}
+      error: {},
+      loading:false
     }
   },
   methods: {
     ...mapActions('users', ['login']),
     ...mapGetters('users', ['getError']),
     async handleLogin() {
+      this.loading = true
       try {
         await this.login(this.credentials)
         window.location.href = '/'
       } catch (error) {
         this.error = error.response.data
+      }finally {
+        this.loading = false
       }
     }
   }
